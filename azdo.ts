@@ -21,6 +21,7 @@ export interface PreviewResources {
 export interface BuildProps {
     project: string;
     pipelineId: string;
+    organization: string;
     inputFile: string;
     resources: PreviewResources,
     templateParameters: Record<string, unknown>,
@@ -35,7 +36,7 @@ export interface BuildResult {
 
 const decoder = new TextDecoder()
 
-export async function Build({ project, pipelineId, inputFile, resources, templateParameters, variables }: BuildProps): Promise<BuildResult> {
+export async function Build({ project, pipelineId, inputFile, resources, templateParameters, variables, organization }: BuildProps): Promise<BuildResult> {
     const inputFileText = await Deno.readTextFile(inputFile)
     const tempFile = await Deno.makeTempFile({ suffix: '.yml' })
 
@@ -51,18 +52,24 @@ export async function Build({ project, pipelineId, inputFile, resources, templat
 
     await Deno.writeTextFile(tempFile, requestJson)
 
+    const cmdArgs = [
+        "az", "devops", "invoke",
+        "--area=pipelines",
+        "--resource=preview",
+        `--route-parameters`,
+        `project=${project}`,
+        `pipelineId=${pipelineId}`,
+        "--api-version=6.0-preview",
+        "--http-method=post",
+        `--in-file=${tempFile}`
+    ]
+
+    if (organization && organization !== "") {
+        cmdArgs.push(`--organization=${organization}`)
+    }
+
     const result = await Deno.run({
-        cmd: [
-            "az", "devops", "invoke",
-            "--area=pipelines",
-            "--resource=preview",
-            `--route-parameters`,
-            `project=${project}`,
-            `pipelineId=${pipelineId}`,
-            "--api-version=6.0-preview",
-            "--http-method=post",
-            `--in-file=${tempFile}`
-        ],
+        cmd: cmdArgs,
         stdout: 'piped',
         stderr: 'piped'
     });

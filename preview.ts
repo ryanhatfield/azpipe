@@ -40,9 +40,10 @@ export async function Run(args: Arguments) {
         project: args.project,
         pipelineId: args.pipelineId,
         inputFile: args.inputFile,
+        organization: args.organization,
         resources,
         templateParameters,
-        variables
+        variables,
     })
 
     if (!success) {

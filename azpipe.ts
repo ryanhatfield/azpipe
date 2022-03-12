@@ -4,7 +4,7 @@ import { parse } from "https://deno.land/std@0.127.0/flags/mod.ts";
 
 export async function RunCMD() {
   const { buildVersion } = parse(Deno.args);
-  const args = await getArgs({ version: buildVersion ?? "1.8.0" });
+  const args = await getArgs({ version: buildVersion ?? "1.8.1" });
 
   // run at least once
   await Run(args);
