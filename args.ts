@@ -1,5 +1,5 @@
 import YARGS from 'https://deno.land/x/yargs@v17.1.1-deno/deno.ts';
-import { config, DotenvConfig } from "https://deno.land/x/dotenv@v3.0.0/mod.ts";
+import { config } from "https://deno.land/x/dotenv@v3.0.0/mod.ts";
 
 export interface Arguments {
     organization: string;
@@ -14,13 +14,6 @@ export interface Arguments {
     resources?: string
     templateParameters?: string
     variables?: string
-}
-
-async function execThenGetConfig({path= '.azpipe'}: {path: string}): Promise<DotenvConfig> {
-    const status = await Deno.permissions.query({ name: "", path: "/etc" });
-if (status.state === "granted") {
-  data = await Deno.readFile("/etc/passwd");
-}
 }
 
 export async function getArgs({ version }: { version: string }): Promise<Arguments> {

@@ -1,15 +1,17 @@
-import { getArgs } from "./args.ts"
-import { Run, Watch } from './preview.ts'
+import { getArgs } from "./args.ts";
+import { Run, Watch } from "./preview.ts";
+import { parse } from "https://deno.land/std@0.127.0/flags/mod.ts";
 
 export async function RunCMD() {
-    const buildVersion = Deno.env.get("AZPIPE_BUILD_VERSION") ?? "1.6.0"
-    const args = await getArgs({ version: buildVersion })
+  const { buildVersion } = parse(Deno.args);
+  const args = await getArgs({ version: buildVersion ?? "1.8.0" });
 
-    // run at least once
-    await Run(args)
+  // run at least once
+  await Run(args);
 
-    if (args.watch)
-        Watch(args, Run)
+  if (args.watch) {
+    Watch(args, Run);
+  }
 }
 
-await RunCMD()
+await RunCMD();
